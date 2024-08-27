@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
-import generateRandomToken from "@/src/tools/tokenGenerator";
 
 export async function POST(request) {
   try {

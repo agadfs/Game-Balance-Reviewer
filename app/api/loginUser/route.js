@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
+import bcrypt from 'bcrypt'; // Import bcrypt for password hashing and comparison
 import generateRandomToken from '@/src/tools/tokenGenerator';
 
 export async function POST(request) {
@@ -8,9 +9,18 @@ export async function POST(request) {
 
     const client = await MongoClient.connect(process.env.MONGODB_URI);
     const db = client.db();
-    const user = await db.collection('Users').findOne({ name, password });
+
+    // Find the user by name
+    const user = await db.collection('Users').findOne({ name });
 
     if (user) {
+      // Compare the provided password with the hashed password stored in the database
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        client.close();
+        return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
+      }
+
       const currentDate = new Date();
       const tokenExpirationDate = new Date(user.tokenExpiration);
 

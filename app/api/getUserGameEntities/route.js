@@ -17,7 +17,7 @@ export async function POST(request) {
     if (entitiesArray.length > 0) {
       const logs = entitiesArray.map(entity => ({
         log: entity.log,
-        interface_Used: entity.Interface_Used,
+       /*  interface_Used: entity.Interface_Used, */
       }));
 
       return NextResponse.json({
